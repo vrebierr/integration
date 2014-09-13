@@ -6,5 +6,11 @@ nav.navbar.navbar-inverse.navbar-static-top(role='navigation')
 .container
 	.row
 		.col-md-6
-			map(center='{{map.center}}', zoom='{{map.zoom}}')
+			map(center='{{map.center}}', zoom='{{map.zoom}}', on-click='setMarker(event)')
 				marker(ng-repeat='event in events', position='{{event.coords}}')
+		.col-md-6
+			form(role='form')
+				.form-group
+					label Description
+					textarea.fomr-control(ng-model='event.description')
+				button.btn.btn-default(ng-click='save()') Sauvegarder
