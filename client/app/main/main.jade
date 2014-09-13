@@ -1,2 +1,2 @@
-google-map(center='map.center', zoom='map.zoom', draggable='true')
-	marker(ng-repeat='marker in markers', idKey='$index', coords='marker.coords')
+map(center='{{map.center}}', zoom='{{map.zoom}}', draggable='true')
+	marker(ng-repeat='marker in markers', position='{{marker.coords}}')
