@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 var EventSchema = new Schema({
 	coords: [Number, Number],
 	description: String,
+	type: String,
 	area: Number
 });
 
