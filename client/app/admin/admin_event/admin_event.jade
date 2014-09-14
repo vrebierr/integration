@@ -3,11 +3,12 @@ nav.navbar.navbar-inverse.navbar-static-top(role='navigation')
 		.navbar-header
 			a.navbar-brand(ui-sref='admin') Administration
 
+map#map_fullscreen(center='{{map.center}}', zoom='{{map.zoom}}', on-click='setMarker(event)')
+	marker(ng-repeat='event in events', position='{{event.coords}}')
+
 .container
 	.row
 		.col-md-6
-			map(center='{{map.center}}', zoom='{{map.zoom}}', on-click='setMarker(event)')
-				marker(ng-repeat='event in events', position='{{event.coords}}')
 		.col-md-6
 			form(role='form')
 				.form-group
