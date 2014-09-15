@@ -4,7 +4,7 @@ angular.module('integrationApp')
 	.controller('AdminEventCtrl', function ($scope, events, Restangular) {
 		$scope.events = events;
 		$scope.event = {};
-		
+
 		$scope.save = function () {
 			if (!$scope.event._id) {
 				events.post($scope.event).then(function (res) {
@@ -14,6 +14,13 @@ angular.module('integrationApp')
 			else {
 				$scope.event.put();
 			}
+		};
+
+		$scope.changeCoords = function (data) {
+			$scope.event = {
+				latitude: data.k,
+				longitude: data.B
+			};
 		};
 
 		// maps
@@ -31,17 +38,25 @@ angular.module('integrationApp')
 			map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 			var	search = new google.maps.places.SearchBox(input);
 
+			// add markers
+			$scope.markers = [];
+			for (var i = 0; i < events.length; i++) {
+				$scope.markers = new google.maps.Marker({
+					position: new google.maps.LatLng(events[i].latitude, events[i].longitude),
+					map: map
+				});
+			}
+
 			// events
 			$scope.marker = new google.maps.Marker();
 			google.maps.event.addListener(map, 'click', function (event) {
 				$scope.marker.setMap(null);
 				$scope.marker = new google.maps.Marker({
 					position: event.latLng,
-					map:map,
+					map: map,
 					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 				});
-				console.log($scope.marker.getPosition());
-				$scope.event.coords = event.latLng;
+				$scope.changeCoords(event.latLng);
 			});
 
 			google.maps.event.addListener(search, 'places_changed', function () {
@@ -53,12 +68,12 @@ angular.module('integrationApp')
 				$scope.marker.setMap(null);
 				$scope.marker = new google.maps.Marker({
 					position: place.geometry.location,
-					map:map,
+					map: map,
 					title: place.name,
 					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 				});
+				$scope.changeCoords(place.geometry.location);
 			});
 		};
-
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());
 	});

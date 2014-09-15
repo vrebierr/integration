@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var EventSchema = new Schema({
-	coords: [Number, Number],
+	latitude: Number,
+	longitude: Number,
 	description: String,
 	type: String,
 	area: Number

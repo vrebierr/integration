@@ -26,9 +26,10 @@ User.find({}).remove(function() {
     );
 });
 
-User.find({}).remove(function() {
+Event.find({}).remove(function() {
     Event.create({
-        coords: [48.89670230000001, 2.3183781999999997],
+        latitude: 48.89670230000001,
+        longitude: 2.3183781999999997,
         description: 'Description de l\'event',
         type: 'foo',
         area: 5000

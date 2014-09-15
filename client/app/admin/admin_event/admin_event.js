@@ -10,7 +10,7 @@ angular.module('integrationApp')
                 authenticate: true,
                 resolve: {
             		events: function (Restangular) {
-            			Restangular.all('events').getList();
+            			return Restangular.all('events').getList();
                 	}
                 }
             });
