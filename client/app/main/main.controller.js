@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket, coords, events) {
-		$scope.coords = coords.$object;
-		socket.syncUpdates('coord', $scope.coords);
+	.controller('MainCtrl', function ($scope, Socket, coords, events) {
+		Socket.on('coord:save', function (data) {
+			console.log(data);
+		});
 		// maps
 		var map;
 		$scope.initialize = function () {
@@ -29,7 +30,6 @@ angular.module('integrationApp')
 		// watching you
 		$scope.marker = new google.maps.Marker();
 		navigator.geolocation.watchPosition(function (pos) {
-			console.log(pos);
 			coords.post({
 				coords: pos.coords
 			}).then(function (res) {
@@ -40,6 +40,7 @@ angular.module('integrationApp')
 					map: map,
 					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 				});
+				Socket.emit('coord:save', res);
 			});
 		});
 

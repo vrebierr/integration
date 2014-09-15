@@ -22,7 +22,6 @@ exports.show = function(req, res) {
 
 // Creates a new coord in the DB.
 exports.create = function(req, res) {
-  console.log(req.body);
   var coord = {
     user: req.user._id,
     latitude: req.body.coords.latitude,
