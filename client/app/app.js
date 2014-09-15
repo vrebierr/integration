@@ -8,10 +8,7 @@ angular.module('integrationApp', [
   'ui.router',
   'ui.bootstrap',
   'restangular'
-]).
-factory('Socket', function (socketFactory) {
-  return socketFactory();
-})
+])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
     $urlRouterProvider
       .otherwise('/');
