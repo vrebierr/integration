@@ -14,8 +14,6 @@ angular.module('integrationApp')
 			};
 			map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-			// events
-			
 			// add markers
 			var markers = [];
 			socket.syncUpdates('coord', $scope.coords, function (event, item, array) {
@@ -24,13 +22,12 @@ angular.module('integrationApp')
 				}
 
 				for (var i = 0; i < array.length; i++) {
-					if (new Date(array[i].timestamp) - new Date() + 30000 > 0) {
+					if (new Date(array[i].timestamp) - new Date() + 180000 > 0) {
 						if (array[i].user != Auth.getCurrentUser()._id) {
 
 							var marker = new google.maps.Marker({
 								position: new google.maps.LatLng(array[i].latitude, array[i].longitude),
-								map: map,
-								animation: google.maps.Animation.DROP
+								map: map
 							});
 							markers.push(marker);
 						}
