@@ -39,13 +39,17 @@ angular.module('integrationApp')
 			var	search = new google.maps.places.SearchBox(input);
 
 			// add markers
-			$scope.markers = [];
 			for (var i = 0; i < events.length; i++) {
-				$scope.markers = new google.maps.Marker({
+				var marker = new google.maps.Marker({
 					position: new google.maps.LatLng(events[i].latitude, events[i].longitude),
 					map: map
 				});
+				google.maps.event.addListener(marker, 'click', function () {
+					marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+				});
 			}
+
+			// event for all marker on click
 
 			// events
 			$scope.marker = new google.maps.Marker();
@@ -73,6 +77,7 @@ angular.module('integrationApp')
 					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 				});
 				$scope.changeCoords(place.geometry.location);
+				map.setCenter(place.geometry.location);
 			});
 		};
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());

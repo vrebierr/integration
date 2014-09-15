@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket) {
+	.controller('MainCtrl', function ($scope, socket, coords, events) {
+		$scope.coords = coords.$object;
+		socket.syncUpdates('coord', $scope.coords);
 		// maps
 		var map;
 		$scope.initialize = function () {
@@ -13,16 +15,35 @@ angular.module('integrationApp')
 			map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
 			// events
-			$scope.marker = new google.maps.Marker();
+			
+			// add markers
+			for (var i = 0; i < coords.length; i++) {
+				var marker = new google.maps.Marker({
+					position: new google.maps.LatLng(coords[i].latitude, coords[i].longitude),
+					map: map
+				});
+			}
 		};
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());
 
 		// watching you
+		$scope.marker = new google.maps.Marker();
 		navigator.geolocation.watchPosition(function (pos) {
-			$scope.marker.setMap(null);
-			$scope.marker = new google.maps.Marker({
-				position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-				map:map
+			console.log(pos);
+			coords.post({
+				coords: pos.coords
+			}).then(function (res) {
+				coords.push(res);
+				$scope.marker.setMap(null);
+				$scope.marker = new google.maps.Marker({
+					position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+					map: map,
+					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+				});
 			});
+		});
+
+		$scope.$on('$destroy', function () {
+			socket.unsyncUpdates('coord');
 		});
 	});

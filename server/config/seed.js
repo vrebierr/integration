@@ -7,6 +7,7 @@
 
 var User = require('../api/user/user.model');
 var Event = require('../api/event/event.model');
+var Coord = require('../api/coord/coord.model');
 
 User.find({}).remove(function() {
     User.create({
@@ -33,5 +34,18 @@ Event.find({}).remove(function() {
         description: 'Description de l\'event',
         type: 'foo',
         area: 5000
+    });
+});
+
+Coord.find({}).remove(function() {
+    Coord.create({
+        latitude: 48.88,
+        longitude: 2.3183781999999997,
+        timestamp: new Date()
+    });
+    Coord.create({
+        latitude: 48.89,
+        longitude: 2.3183781999999997,
+        timestamp: new Date() - 18000
     });
 });
