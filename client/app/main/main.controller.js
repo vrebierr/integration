@@ -3,7 +3,10 @@
 angular.module('integrationApp')
 	.controller('MainCtrl', function ($scope, socket) {
 		$scope.map = {
-			center: [48.89670230000001, 2.3183781999999997],
+			center: {
+				latitude: 48.89670230000001,
+				longitude: 2.3183781999999997
+			},
 			zoom: 12
 		};
 

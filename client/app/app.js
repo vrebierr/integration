@@ -7,7 +7,6 @@ angular.module('integrationApp', [
   'btford.socket-io',
   'ui.router',
   'ui.bootstrap',
-  'ngMap',
   'restangular'
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider, RestangularProvider) {
