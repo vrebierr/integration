@@ -47,7 +47,6 @@ angular.module('integrationApp')
           } else {
             array.push(item);
           }
-          console.log(array);
           cb(event, item, array);
         });
 
