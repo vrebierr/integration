@@ -1,8 +1,11 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular) {
-		$scope.coords = coords;
+	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular, $http) {
+		$scope.coords = [];
+		$http.get('/api/coords/').success(function (data) {
+			$scope.coords = data;
+		});
 
 		// maps
 		var map;
@@ -20,35 +23,31 @@ angular.module('integrationApp')
 				for (var i = 0; i < markers.length; i++) {
 					markers[i].setMap(null);
 				}
+				markers = [];
 
 				for (var i = 0; i < array.length; i++) {
-					if (new Date(array[i].timestamp) - new Date() + 180000 > 0) {
-						if (array[i].user != Auth.getCurrentUser()._id) {
-							var marker = new google.maps.Marker({
-								position: new google.maps.LatLng(array[i].latitude, array[i].longitude),
-								map: map
-							});
-							markers.push(marker);
-						}
-					}
-					else {
-						$scope.coords.splice(i, 1);
-						markers.splice(i, 1);
+					if (Auth.getCurrentUser().coord != array[i]._id)
+					{
+						var marker = new google.maps.Marker({
+							position: new google.maps.LatLng(array[i].latitude, array[i].longitude),
+							map: map,
+						});
+						markers.push(marker);
 					}
 				}
+				console.log(array);
 			});
 		};
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());
 
 		// watching you
 		$scope.marker = new google.maps.Marker();
-		navigator.geolocation.watchPosition(function (pos) {
-			Restangular.one('coords', Auth.getCurrentUser().coord).get().then(function (coord) {
+		Restangular.one('coords', Auth.getCurrentUser().coord).get().then(function (coord) {
+			navigator.geolocation.watchPosition(function (pos) {
 				coord.latitude = pos.coords.latitude;
 				coord.longitude = pos.coords.longitude;
 				coord.accuracy = pos.coords.accuracy;
 				coord.put().then(function (res) {
-					coords.push(res);
 					$scope.marker.setMap(null);
 					$scope.marker = new google.maps.Marker({
 						position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
