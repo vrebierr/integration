@@ -14,7 +14,7 @@ var UserSchema = new Schema({
   hashedPassword: String,
   provider: String,
   salt: String,
-  coords: { type: Schema.Types.ObjectId, ref: 'Coord' }
+  coord: { type: Schema.Types.ObjectId, ref: 'Coord' }
 });
 
 /**

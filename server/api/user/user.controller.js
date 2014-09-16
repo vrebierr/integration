@@ -38,6 +38,7 @@ exports.create = function (req, res, next) {
 
   Coord.create(coord, function(err, coord) {
     if(err) { return handleError(res, err); }
+    newUser.coord = coord._id;
     newUser.save(function(err, user) {
       if (err) return validationError(res, err);
       var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });

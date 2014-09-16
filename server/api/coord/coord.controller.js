@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Coord = require('./coord.model');
+var User = require('../user/user.model');
 
 // Get list of coords
 exports.index = function(req, res) {
@@ -22,13 +23,6 @@ exports.show = function(req, res) {
 
 // Creates a new coord in the DB.
 exports.create = function(req, res) {
-  var coord = {
-    user: req.user._id,
-    latitude: req.body.coords.latitude,
-    longitude: req.body.coords.longitude,
-    timestamp: new Date(),
-    accuracy: req.body.coords.accuracy
-  };
   Coord.create(coord, function(err, coord) {
     if(err) { return handleError(res, err); }
     return res.json(201, coord);
@@ -38,16 +32,19 @@ exports.create = function(req, res) {
 // Updates an existing coord in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  Coord.findById(req.params.id, function (err, coord) {
-    if (err) { return handleError(res, err); }
-    if(!coord) { return res.send(404); }
-    if (coord.user != req.user._id) {
-      return res.send(403);
-    }
-    var updated = _.merge(coord, req.body);
-    updated.save(function (err) {
+
+  User.findById(req.user._id, function (err, user) {
+    if (err) return next(err);
+    if (!user) return res.send(401);
+
+    Coord.findById(user.coord, function (err, coord) {
       if (err) { return handleError(res, err); }
-      return res.json(200, coord);
+      if(!coord) { return res.send(404); }
+      var updated = _.merge(coord, req.body);
+      updated.save(function (err) {
+        if (err) { return handleError(res, err); }
+        return res.json(200, coord);
+      });
     });
   });
 };

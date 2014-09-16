@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket, coords, events, Auth) {
+	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular) {
 		$scope.coords = coords;
 
 		// maps
@@ -24,7 +24,6 @@ angular.module('integrationApp')
 				for (var i = 0; i < array.length; i++) {
 					if (new Date(array[i].timestamp) - new Date() + 180000 > 0) {
 						if (array[i].user != Auth.getCurrentUser()._id) {
-
 							var marker = new google.maps.Marker({
 								position: new google.maps.LatLng(array[i].latitude, array[i].longitude),
 								map: map
@@ -44,15 +43,18 @@ angular.module('integrationApp')
 		// watching you
 		$scope.marker = new google.maps.Marker();
 		navigator.geolocation.watchPosition(function (pos) {
-			coords.put({
-				coords: pos.coords
-			}).then(function (res) {
-				coords.push(res);
-				$scope.marker.setMap(null);
-				$scope.marker = new google.maps.Marker({
-					position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-					map: map,
-					icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+			Restangular.one('coords', Auth.getCurrentUser().coord).get().then(function (coord) {
+				coord.latitude = pos.coords.latitude;
+				coord.longitude = pos.coords.longitude;
+				coord.accuracy = pos.coords.accuracy;
+				coord.put().then(function (res) {
+					coords.push(res);
+					$scope.marker.setMap(null);
+					$scope.marker = new google.maps.Marker({
+						position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+						map: map,
+						icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+					});
 				});
 			});
 		});
