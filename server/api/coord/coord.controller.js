@@ -41,6 +41,9 @@ exports.update = function(req, res) {
   Coord.findById(req.params.id, function (err, coord) {
     if (err) { return handleError(res, err); }
     if(!coord) { return res.send(404); }
+    if (coord.user != req.user._id) {
+      return res.send(403);
+    }
     var updated = _.merge(coord, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }

@@ -44,7 +44,7 @@ angular.module('integrationApp')
 		// watching you
 		$scope.marker = new google.maps.Marker();
 		navigator.geolocation.watchPosition(function (pos) {
-			coords.post({
+			coords.put({
 				coords: pos.coords
 			}).then(function (res) {
 				coords.push(res);

@@ -1,6 +1,7 @@
 'use strict';
 
 var User = require('./user.model');
+var Coord = require('../coord/coord.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -27,10 +28,21 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
-  newUser.save(function(err, user) {
-    if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
+
+  var coord = {
+    latitude: 0,
+    longitude: 0,
+    timestamp: 0,
+    accuracy: 0
+  };
+
+  Coord.create(coord, function(err, coord) {
+    if(err) { return handleError(res, err); }
+    newUser.save(function(err, user) {
+      if (err) return validationError(res, err);
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+      res.json({ token: token });
+    });
   });
 };
 
