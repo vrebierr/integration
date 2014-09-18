@@ -38,11 +38,19 @@ angular.module('integrationApp')
 			socket.syncUpdates('coord', [], function (event, item, array) {
 				index = markers.map(function (e) { return e.id }).indexOf(item._id);
 				if (index == -1) {
-					var marker = new google.maps.Marker({
-						position: new google.maps.LatLng(coord.latitude, coord.longitude),
-						map: map
-					});
-					markers.push({id: coord._id, marker: marker})
+					if (Auth.getCurrentUser().coord == item._id) {
+						var marker = new google.maps.Marker({
+							position: new google.maps.LatLng(item.latitude, item.longitude),
+							map: map,
+							icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+						});
+					} else {
+						var marker = new google.maps.Marker({
+							position: new google.maps.LatLng(item.latitude, item.longitude),
+							map: map
+						});
+					}
+					markers.push({id: item._id, marker: marker});
 				} else {
 					markers[index].marker.setPosition(new google.maps.LatLng(item.latitude, item.longitude));
 				}
