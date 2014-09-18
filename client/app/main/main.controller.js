@@ -1,11 +1,7 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular, $http) {
-		$scope.coords = [];
-		$http.get('/api/coords/').success(function (data) {
-			$scope.coords = data;
-		});
+	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular) {
 
 		// maps
 		var map;
@@ -19,23 +15,32 @@ angular.module('integrationApp')
 
 			// add markers
 			var markers = [];
-			socket.syncUpdates('coord', $scope.coords, function (event, item, array) {
-				for (var i = 0; i < markers.length; i++) {
-					markers[i].setMap(null);
-				}
-				markers = [];
-
-				for (var i = 0; i < array.length; i++) {
-					if (Auth.getCurrentUser().coord != array[i]._id)
-					{
+			Restangular.all('coords').getList().then(function (coords) {
+				$scope.coords = coords;
+				_.forEach($scope.coords, function (coord) {
+					if (Auth.getCurrentUser().coord == coord._id) {
 						var marker = new google.maps.Marker({
-							position: new google.maps.LatLng(array[i].latitude, array[i].longitude),
+							position: new google.maps.LatLng(coord.latitude, coord.longitude),
 							map: map,
+							icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
 						});
-						markers.push(marker);
+					} else {
+						var marker = new google.maps.Marker({
+							position: new google.maps.LatLng(coord.latitude, coord.longitude),
+							map: map
+						});
 					}
-				}
-				console.log(array);
+					markers.push({id: coord._id, marker: marker});
+				});
+			});
+
+			var marker;
+			socket.syncUpdates('coord', $scope.coords, function (event, item, array) {
+				marker = markers.map(function (e) {
+					console.log(e);
+					return e.id;
+				}).indexOf(item._id);
+				marker.marker.setPosition(new google.maps.LatLng(item.latitude, item.longitude));
 			});
 		};
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());
@@ -48,12 +53,7 @@ angular.module('integrationApp')
 				coord.longitude = pos.coords.longitude;
 				coord.accuracy = pos.coords.accuracy;
 				coord.put().then(function (res) {
-					$scope.marker.setMap(null);
-					$scope.marker = new google.maps.Marker({
-						position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-						map: map,
-						icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-					});
+
 				});
 			});
 		});

@@ -41,11 +41,13 @@ Coord.find({}).remove(function() {
     Coord.create({
         latitude: 48.88,
         longitude: 2.3183781999999997,
-        timestamp: new Date()
+        timestamp: new Date(),
+        accuracy: 0
     });
     Coord.create({
         latitude: 48.89,
         longitude: 2.3183781999999997,
-        timestamp: new Date() - 18000
+        timestamp: new Date() - 18000,
+        accuracy: 0
     });
 });

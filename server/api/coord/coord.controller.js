@@ -6,8 +6,9 @@ var User = require('../user/user.model');
 
 // Get list of coords
 exports.index = function(req, res) {
-  Coord.find({'timestamp': {'$gt': new Date() - 120000}}, function (err, coords) {
+  Coord.find({}, function (err, coords) {
     if(err) { return handleError(res, err); }
+    console.log(coords);
     return res.json(200, coords);
   });
 };
