@@ -17,7 +17,7 @@ angular.module('integrationApp')
 			var markers = [];
 			Restangular.all('coords').getList().then(function (coords) {
 				$scope.coords = coords;
-				_.forEach($scope.coords, function (coord) {
+				_.forEach(coords, function (coord) {
 					if (Auth.getCurrentUser().coord == coord._id) {
 						var marker = new google.maps.Marker({
 							position: new google.maps.LatLng(coord.latitude, coord.longitude),
@@ -34,13 +34,18 @@ angular.module('integrationApp')
 				});
 			});
 
-			var marker;
-			socket.syncUpdates('coord', $scope.coords, function (event, item, array) {
-				marker = markers.map(function (e) {
-					console.log(e);
-					return e.id;
-				}).indexOf(item._id);
-				marker.marker.setPosition(new google.maps.LatLng(item.latitude, item.longitude));
+			var index;
+			socket.syncUpdates('coord', [], function (event, item, array) {
+				index = markers.map(function (e) { return e.id }).indexOf(item._id);
+				if (index == -1) {
+					var marker = new google.maps.Marker({
+						position: new google.maps.LatLng(coord.latitude, coord.longitude),
+						map: map
+					});
+					markers.push({id: coord._id, marker: marker})
+				} else {
+					markers[index].marker.setPosition(new google.maps.LatLng(item.latitude, item.longitude));
+				}
 			});
 		};
 		google.maps.event.addDomListener(window, 'load', $scope.initialize());
