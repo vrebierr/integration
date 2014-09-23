@@ -10,8 +10,8 @@ angular.module('integrationApp')
 
       if(form.$valid) {
         Auth.login({
-          email: $scope.user.email,
-          password: $scope.user.password
+          login: $scope.username,
+          password: $scope.password
         })
         .then( function() {
           // Logged in, redirect to home

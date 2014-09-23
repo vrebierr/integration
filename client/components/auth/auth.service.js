@@ -21,7 +21,7 @@ angular.module('integrationApp')
         var deferred = $q.defer();
 
         $http.post('/auth/local', {
-          email: user.email,
+          username: user.login,
           password: user.password
         }).
         success(function(data) {
