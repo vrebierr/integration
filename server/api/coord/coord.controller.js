@@ -40,8 +40,13 @@ exports.update = function(req, res) {
     Coord.findById(user.coord, function (err, coord) {
       if (err) { return handleError(res, err); }
       if(!coord) { return res.send(404); }
-      var updated = _.merge(coord, req.body);
-      updated.save(function (err) {
+
+      coord.timestamp = new Date();
+      coord.latitude = req.body.latitude;
+      coord.longitude = req.body.longitude;
+      coord.accuracy = req.body.accuracy;
+
+      coord.save(function (err) {
         if (err) { return handleError(res, err); }
         return res.json(200, coord);
       });

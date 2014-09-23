@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('integrationApp')
-	.controller('MainCtrl', function ($scope, socket, coords, events, Auth, Restangular) {
+	.controller('MainCtrl', function ($scope, socket, events, Auth, Restangular) {
 
 		// maps
 		var map;
@@ -17,6 +17,7 @@ angular.module('integrationApp')
 			var markers = [];
 			Restangular.all('coords').getList().then(function (coords) {
 				$scope.coords = coords;
+				console.log(coords);
 				_.forEach(coords, function (coord) {
 					if (Auth.getCurrentUser().coord == coord._id) {
 						var marker = new google.maps.Marker({
