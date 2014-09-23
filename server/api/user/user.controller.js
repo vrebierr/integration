@@ -5,6 +5,7 @@ var Coord = require('../coord/coord.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var ldap = require('ldapjs');
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -28,6 +29,19 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
+
+  var client = ldap.createClient({
+    url: 'ldaps://ldap.42.fr:636'
+  });
+
+  client.bind('cn=' + newUser.name, newUser.password, function (err) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      console.log('gg');
+    }
+  });
 
   var coord = {
     latitude: 0,
