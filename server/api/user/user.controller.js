@@ -23,45 +23,6 @@ exports.index = function(req, res) {
 };
 
 /**
- * Creates a new user
- */
-exports.create = function (req, res, next) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-
-  var client = ldap.createClient({
-    url: 'ldaps://ldap.42.fr:636'
-  });
-
-  client.bind('cn=' + newUser.name, newUser.password, function (err) {
-    if (err) {
-      console.log(err);
-    }
-    else {
-      console.log('gg');
-    }
-  });
-
-  var coord = {
-    latitude: 0,
-    longitude: 0,
-    timestamp: 0,
-    accuracy: 0
-  };
-
-  Coord.create(coord, function(err, coord) {
-    if(err) { return handleError(res, err); }
-    newUser.coord = coord._id;
-    newUser.save(function(err, user) {
-      if (err) return validationError(res, err);
-      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-      res.json({ token: token });
-    });
-  });
-};
-
-/**
  * Get a single user
  */
 exports.show = function (req, res, next) {
