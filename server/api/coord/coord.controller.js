@@ -41,16 +41,16 @@ exports.update = function(req, res) {
       if (err) { return handleError(res, err); }
       if(!coord) { return res.send(404); }
 
-      var now = new Date()
+      var now = new Date();
       var dist = Math.sqrt(Math.pow(req.body.latitude - coord.latitude, 2) + Math.pow(req.body.longitude - coord.longitude, 2)) * 100000000;
       var time = (now - coord.timestamp) * 3600;
-      var speed = dist / time;
+      var speed = Math.round(dist / time * 100) / 100;
 
       if (speed > 90) {
-        return res.json(200, 'Nice try.');
+        return res.json(200, 'Nice try. You\'ll be report');
       }
       else {
-        coord.timestamp = new Date();
+        coord.timestamp = now;
         coord.latitude = req.body.latitude;
         coord.longitude = req.body.longitude;
         coord.accuracy = req.body.accuracy;
