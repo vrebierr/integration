@@ -56,9 +56,11 @@ exports.setup = function (config) {
                                                 if (err) { return done(err); }
                                                 return done(null, user);
                                             });
-                                        });  
+                                        });
                                     }
-                                    return done(null, user);
+                                    else {
+                                        return done(null, user);
+                                    }
                                 });
                             }
                         });
