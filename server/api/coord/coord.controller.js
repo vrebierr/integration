@@ -46,7 +46,7 @@ exports.update = function(req, res) {
       var time = (now - coord.timestamp) * 3600;
       var speed = dist / time;
 
-      if (speed > 80) {
+      if (speed > 90) {
         return res.json(200, 'Nice try.');
       }
       else {
