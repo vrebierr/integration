@@ -45,6 +45,13 @@ angular.module('integrationApp')
 					map: map
 				});
 				google.maps.event.addListener(marker, 'click', function () {
+					$scope.marker.setMap(null);
+					_.forEach(events, function (event) {
+
+					});
+					for (var i = 0; i < $scope.events.length; i++) {
+						$scope.events[i].setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+					}
 					marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
 				});
 			}
